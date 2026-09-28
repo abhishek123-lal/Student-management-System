@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EduMind — Student Management System</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mu:#667085;--bd:#e4e7ee;--ac:#4f46e5;--ok:#16a34a;--wa:#d97706;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#181c2e;--tx:#eceefb;--mu:#98a0bd;--bd:#2a3050;--ac:#818cf8}}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#181c2e;--tx:#eceefb;--mu:#98a0bd;--bd:#2a3050;--ac:#818cf8}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:960px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0 2px}h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--mu);margin:0 0 16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px}
+.grid .card{margin:0}.n{font-size:26px;font-weight:700}.l{color:var(--mu);font-size:13px}
+form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:3px}
+input,select{padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;width:100%}
+button{padding:8px 12px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
+button.g{background:transparent;color:var(--ac);border:1px solid var(--bd)}
+form button{align-self:end}
+.w{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);font-size:14px}th{color:var(--mu);font-weight:600}
+.pill{padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
+.ok{background:var(--ok)}.wa{background:var(--wa)}.bad{background:var(--bad)}
+.ai{white-space:pre-wrap;margin-top:10px;padding:12px;border-left:3px solid var(--ac);background:var(--bg);border-radius:6px}
+.mu{color:var(--mu);font-size:13px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button.on{background:var(--ac);color:#fff}
+.slot{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:8px;margin-bottom:8px}
+.slot.brk{border-left-color:var(--wa);background:var(--bg)}.slot b{display:block}
+.tm{font-variant-numeric:tabular-nums;color:var(--mu);font-size:13px}
+.hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.hd b{font-size:20px;letter-spacing:.3px}.sp{flex:1}
+.lo{width:44px;height:44px;flex:none;filter:drop-shadow(0 4px 8px rgba(79,70,229,.35))}
+button.on{background:var(--ac);color:#fff}
+section[data-p]{display:none}section.on{display:block}
+.g2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.ar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}.ar>span:first-child{min-width:90px}
+#lg{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}#lg[hidden]{display:none}
+#lg .card{width:100%;max-width:360px;text-align:center;margin:0}#lg form{grid-template-columns:1fr;text-align:left}
+#lg .lo{width:84px;height:84px}.err{color:var(--bad);font-size:13px;min-height:18px;margin:0}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><symbol id="logo" viewBox="0 0 64 64"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset=".6" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lgG)"/><path d="M32 13 60 26 32 39 4 26z" fill="#fff"/><path d="M17 33v10c0 5 7 9 15 9s15-4 15-9V33L32 39z" fill="#fff" fill-opacity=".82"/><path d="M56 28v14" stroke="#fde68a" stroke-width="2.5" stroke-linecap="round"/><circle cx="56" cy="45" r="3" fill="#fde68a"/></symbol></svg>
+<div id="lg"><div class="card"><svg class="lo" viewBox="0 0 64 64"><use href="#logo"/></svg><h1>EduMind</h1><p class="sub">Student Management System</p>
+<form id="lf"><label id="sn" hidden>Full name<input name="n" maxlength="40"></label><label>Username<input name="u" required autocomplete="username"></label><label>Password<input name="p" type="password" required autocomplete="current-password"></label><p class="err" id="le"></p><button id="lb">Sign in</button><button type="button" class="g" id="lt">New student? Sign up</button></form>
+<p class="mu" style="margin-top:12px">Demo logins: admin / admin123 · teacher / teach123<br>Demo only — not real security. Sign-ups are saved on this device only.</p></div></div>
+<main id="app">
+<header class="hd"><svg class="lo" viewBox="0 0 64 64"><use href="#logo"/></svg><div><b>EduMind</b><div class="mu">Student Management System</div></div><span class="sp"></span><span class="mu" id="who"></span><button class="g" id="out">Logout</button></header>
+<nav class="tabs" id="nav"><button class="g" data-p="home">🏠 Home</button><button class="g" data-p="students">🎓 Students</button><button class="g" data-p="classes">📅 Classes</button><button class="g" data-p="attendance">✅ Attendance</button><button class="g" data-p="logins" id="navL" hidden>👥 Login activity</button></nav>
+<section data-p="home">
+<p class="sub">Machine learning predicts who is at risk; generative AI writes the support plan.</p>
+
+<div class="grid">
+  <div class="card"><div class="n" id="sN">0</div><div class="l">Students</div></div>
+  <div class="card"><div class="n" id="sM">0</div><div class="l">Average marks</div></div>
+  <div class="card"><div class="n" id="sA">0%</div><div class="l">Average attendance</div></div>
+  <div class="card"><div class="n" id="sR">0</div><div class="l">At risk (ML)</div></div>
+</div>
+
+<div class="g2"><div class="card"><h2>Today's classes</h2><div id="hToday"></div></div><div class="card"><h2>Needs attention (ML)</h2><div id="hRisk"></div></div></div>
+</section><section data-p="students">
+<div class="card">
+  <h2>Add student</h2>
+  <form id="f">
+    <label>Name<input name="name" required maxlength="40"></label>
+    <label>Attendance %<input name="att" type="number" min="0" max="100" required></label>
+    <label>Avg marks %<input name="marks" type="number" min="0" max="100" required></label>
+    <label>Assignments done %<input name="asg" type="number" min="0" max="100" required></label>
+    <label>Study hrs / week<input name="hrs" type="number" min="0" max="80" required></label>
+    <button>Add</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Students</h2>
+  <div class="w"><table>
+    <thead><tr><th>Name</th><th>Attend.</th><th>Marks</th><th>Assign.</th><th>Hrs</th><th>Fail risk</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table></div>
+  <div id="ai" class="ai" hidden></div>
+</div>
+
+<div class="card">
+  <h2>ML model</h2>
+  <p class="mu" id="ml">Training…</p>
+  <p class="mu">Logistic regression trained in your browser on 400 synthetic student records (attendance, marks, assignments, study hours → pass/fail). Swap in your institution's real data for real predictions.</p>
+</div>
+</section><section data-p="classes">
+<div class="card">
+  <h2>Timetable — full-day classes</h2>
+  <form id="cf">
+    <label>Subject<input name="sub" required maxlength="40"></label>
+    <label>Day<select name="day" id="cd"></select></label>
+    <label>Start<input name="st" type="time" required value="09:00"></label>
+    <label>End<input name="en" type="time" required value="10:00"></label>
+    <label>Teacher<input name="tea" maxlength="40"></label>
+    <label>Room<input name="rm" maxlength="20"></label>
+    <button>Add class</button>
+  </form>
+  <div class="tabs" id="tabs" style="margin-top:14px"></div>
+  <div id="day"></div>
+</div>
+
+</section><section data-p="attendance">
+<div class="card"><h2>Mark attendance</h2>
+<form><label>Date<input type="date" id="ad"></label><label>Class<select id="ac"></select></label><button type="button" id="allp">All present</button></form>
+<div id="alist" style="margin-top:12px"></div></div>
+<div class="card"><h2>Attendance report</h2><div class="w"><table><thead><tr><th>Student</th><th>Present</th><th>Late</th><th>Absent</th><th>Attendance</th></tr></thead><tbody id="arep"></tbody></table></div></div>
+</section><section data-p="logins">
+<div class="card"><h2>Login activity</h2><p class="mu" id="lsum"></p><div class="w"><table><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Time</th><th>IP</th></tr></thead><tbody id="lrows"></tbody></table></div></div>
+</section>
+</main>
+
+<script>
+// ---------- Machine learning: logistic regression ----------
+const F=["att","marks","asg","hrs"];
+const norm=s=>[s.att/100,s.marks/100,s.asg/100,Math.min(s.hrs,40)/40];
+const sig=z=>1/(1+Math.exp(-z));
+let W=[0,0,0,0],B=0,ACC=0;
+function synth(n){
+  const d=[];
+  for(let i=0;i<n;i++){
+    const s={att:40+Math.random()*60,marks:25+Math.random()*75,asg:20+Math.random()*80,hrs:Math.random()*30};
+    const score=.35*s.marks+.25*s.att+.25*s.asg+.15*(s.hrs/30*100)+(Math.random()-.5)*20;
+    d.push({x:norm(s),y:score<58?1:0}); // 1 = fail / at risk
+  }
+  return d;
+}
+function train(){
+  const d=synth(400);
+  for(let e=0;e<1500;e++){
+    const gw=[0,0,0,0];let gb=0;
+    for(const r of d){
+      const p=sig(B+r.x.reduce((a,v,i)=>a+v*W[i],0)),err=p-r.y;
+      r.x.forEach((v,i)=>gw[i]+=err*v);gb+=err;
+    }
+    W=W.map((w,i)=>w-.8*gw[i]/d.length);B-=.8*gb/d.length;
+  }
+  const t=synth(200);
+  ACC=t.filter(r=>(sig(B+r.x.reduce((a,v,i)=>a+v*W[i],0))>.5?1:0)===r.y).length/t.length;
+  document.getElementById("ml").textContent="Test accuracy: "+(ACC*100).toFixed(1)+"% · Feature weights → attendance "+W[0].toFixed(1)+", marks "+W[1].toFixed(1)+", assignments "+W[2].toFixed(1)+", study hours "+W[3].toFixed(1)+" (more negative = stronger protection).";
+}
+const risk=s=>sig(B+norm(s).reduce((a,v,i)=>a+v*W[i],0));
+
+// ---------- Data ----------
+let S=[];
+try{S=JSON.parse(localStorage.getItem("sms")||"null")||[]}catch(e){}
+if(!S.length)S=[
+  {id:1,name:"Aarav Sharma",att:92,marks:81,asg:95,hrs:14},
+  {id:2,name:"Priya Verma",att:64,marks:52,asg:58,hrs:6},
+  {id:3,name:"Rohan Singh",att:78,marks:66,asg:72,hrs:9},
+  {id:4,name:"Ananya Gupta",att:55,marks:41,asg:40,hrs:3}];
+const save=()=>{try{localStorage.setItem("sms",JSON.stringify(S))}catch(e){}};
+
+// ---------- UI ----------
+const $=id=>document.getElementById(id);
+function render(){
+  const tb=$("rows");tb.textContent="";
+  S.forEach(s=>{
+    const r=risk(s),c=r>.6?"bad":r>.3?"wa":"ok",tr=document.createElement("tr");
+    [s.name,s.att+"%",s.marks+"%",s.asg+"%",s.hrs].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td)});
+    const td=document.createElement("td"),p=document.createElement("span");
+    p.className="pill "+c;p.textContent=Math.round(r*100)+"%";td.append(p);tr.append(td);
+    const ac=document.createElement("td"),b=document.createElement("button");
+    b.className="g";b.textContent="✨ AI plan";b.onclick=()=>advise(s,r);
+    const x=document.createElement("button");x.className="g";x.textContent="✕";x.style.marginLeft="6px";
+    x.onclick=()=>{S=S.filter(k=>k.id!==s.id);save();render()};
+    ac.append(b,x);tr.append(ac);tb.append(tr);
+  });
+  const n=S.length||1;
+  $("sN").textContent=S.length;
+  $("sM").textContent=Math.round(S.reduce((a,s)=>a+s.marks,0)/n)+"%";
+  $("sA").textContent=Math.round(S.reduce((a,s)=>a+s.att,0)/n)+"%";
+  $("sR").textContent=S.filter(s=>risk(s)>.5).length;
+  renderHome();
+}
+$("f").onsubmit=e=>{
+  e.preventDefault();const f=new FormData(e.target);
+  S.push({id:Date.now(),name:f.get("name").trim(),att:+f.get("att"),marks:+f.get("marks"),asg:+f.get("asg"),hrs:+f.get("hrs")});
+  save();render();e.target.reset();
+};
+
+// ---------- Generative AI ----------
+async function advise(s,r){
+  const box=$("ai");box.hidden=false;box.textContent="Generating…";
+  const prompt="You are a supportive academic advisor. Student: "+s.name+". Attendance "+s.att+"%, average marks "+s.marks+"%, assignments completed "+s.asg+"%, study "+s.hrs+" hrs/week. An ML model estimates a "+Math.round(r*100)+"% risk of failing. Write: (1) a 2-sentence assessment, (2) a 4-item weekly study plan, (3) one encouraging message to the student. Be concise and kind, plain text.";
+  try{
+    const sample=await claude.use("sample");
+    if(!sample){box.textContent=fallback(s,r);return}
+    const out=await sample(prompt,{onText:({text})=>{box.textContent=text}});
+    box.textContent=out.text;
+  }catch(e){box.textContent=fallback(s,r)}
+}
+function fallback(s,r){
+  const t=[];
+  if(s.att<75)t.push("Raise attendance above 75%.");
+  if(s.asg<70)t.push("Finish pending assignments first.");
+  if(s.hrs<8)t.push("Add 1 focused study hour per day.");
+  if(s.marks<55)t.push("Book a session with the subject teacher.");
+  return s.name+": estimated risk "+Math.round(r*100)+"%.\n"+(t.join("\n")||"Keep up the good work.")+"\n(Rule-based tips shown; the AI advisor was unavailable.)";
+}
+
+// ---------- Timetable ----------
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let C=[];try{C=JSON.parse(localStorage.getItem("smsC")||"null")||[]}catch(e){}
+if(!C.length)C=[
+  ["Mathematics","09:00","10:00","Dr. Mishra","A-101"],["Physics","10:00","11:00","Prof. Khan","B-204"],
+  ["Break","11:00","11:30","",""],["Computer Science Lab","11:30","13:30","Ms. Rao","Lab 2"],
+  ["Lunch","13:30","14:15","",""],["English","14:15","15:15","Mr. Das","A-105"],["Machine Learning","15:15","16:30","Dr. Iyer","C-301"]
+].map((a,i)=>({id:i+1,day:"Monday",sub:a[0],st:a[1],en:a[2],tea:a[3],rm:a[4]}));
+const saveC=()=>{try{localStorage.setItem("smsC",JSON.stringify(C))}catch(e){}};
+let curDay=DAYS[new Date().getDay()-1]||"Monday";
+DAYS.forEach(d=>{const o=document.createElement("option");o.textContent=d;$("cd").append(o)});
+function renderDay(){
+  const t=$("tabs");t.textContent="";
+  DAYS.forEach(d=>{const b=document.createElement("button");b.className="g"+(d===curDay?" on":"");b.textContent=d.slice(0,3);b.onclick=()=>{curDay=d;renderDay()};t.append(b)});
+  const box=$("day");box.textContent="";
+  const L=C.filter(c=>c.day===curDay).sort((a,b)=>a.st.localeCompare(b.st));
+  if(!L.length){box.innerHTML='<p class="mu">No classes on '+curDay+'. Add one above.</p>';return}
+  L.forEach(c=>{
+    const r=document.createElement("div");r.className="slot"+(/^(break|lunch)/i.test(c.sub)?" brk":"");
+    const a=document.createElement("div");a.className="tm";a.textContent=c.st+" – "+c.en;
+    const m=document.createElement("div"),b=document.createElement("b");b.textContent=c.sub;
+    const s=document.createElement("span");s.className="mu";s.textContent=[c.tea,c.rm].filter(Boolean).join(" · ");
+    m.append(b,s);
+    const x=document.createElement("button");x.className="g";x.textContent="✕";
+    x.onclick=()=>{C=C.filter(k=>k.id!==c.id);saveC();renderDay()};
+    r.append(a,m,x);box.append(r);
+  });
+  const hrs=L.filter(c=>!/^(break|lunch)/i.test(c.sub)).reduce((a,c)=>{const[h1,m1]=c.st.split(":"),[h2,m2]=c.en.split(":");return a+(h2*60+ +m2-h1*60- +m1)/60},0);
+  const n=document.createElement("p");n.className="mu";n.textContent="Total class time: "+hrs.toFixed(1)+" h · "+L[0].st+" to "+L[L.length-1].en;box.append(n);
+}
+$("cf").onsubmit=e=>{
+  e.preventDefault();const f=new FormData(e.target);
+  if(f.get("en")<=f.get("st")){alert("End time must be after start time.");return}
+  C.push({id:Date.now(),day:f.get("day"),sub:f.get("sub").trim(),st:f.get("st"),en:f.get("en"),tea:f.get("tea").trim(),rm:f.get("rm").trim()});
+  curDay=f.get("day");saveC();renderDay();
+};
+
+// ---------- Home ----------
+function row(a,b){const p=document.createElement("div");p.className="ar";const x=document.createElement("span");x.className="tm";x.textContent=a;const y=document.createElement("span");y.textContent=b;p.append(x,y);return p}
+function renderHome(){
+  const t=$("hToday"),r=$("hRisk");t.textContent="";r.textContent="";
+  const day=DAYS[new Date().getDay()-1];
+  const L=C.filter(c=>c.day===day).sort((a,b)=>a.st.localeCompare(b.st));
+  if(!L.length)t.textContent=day?"No classes today.":"Sunday — no classes.";
+  L.forEach(c=>t.append(row(c.st+"–"+c.en,c.sub)));
+  const R=S.filter(s=>risk(s)>.5);
+  if(!R.length)r.textContent="No students at risk 🎉";
+  R.forEach(s=>r.append(row(Math.round(risk(s)*100)+"%",s.name)));
+}
+
+// ---------- Attendance ----------
+let A=[];try{A=JSON.parse(localStorage.getItem("smsA")||"null")||[]}catch(e){}
+const saveA=()=>{try{localStorage.setItem("smsA",JSON.stringify(A))}catch(e){}};
+const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const isBrk=c=>/^(break|lunch)/i.test(c.sub);
+function fillCls(){
+  const sel=$("ac");sel.textContent="";
+  const day=DAYS[new Date($("ad").value+"T00:00").getDay()-1];
+  C.filter(c=>c.day===day&&!isBrk(c)).sort((a,b)=>a.st.localeCompare(b.st)).forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.st+" "+c.sub;sel.append(o)});
+  drawList();
+}
+function stat(sid){const r=A.find(k=>k.d===$("ad").value&&k.c==$("ac").value&&k.sid===sid);return r&&r.s}
+function mark(sid,st){
+  const d=$("ad").value,c=$("ac").value;if(!c)return;
+  const r=A.find(k=>k.d===d&&k.c==c&&k.sid===sid);
+  if(r)r.s=st;else A.push({d,c,sid,s:st});
+  saveA();sync();
+}
+function sync(){
+  S.forEach(s=>{const m=A.filter(k=>k.sid===s.id);if(m.length)s.att=Math.round(m.filter(k=>k.s!=="A").length/m.length*100)});
+  save();render();drawList();drawRep();
+}
+function drawList(){
+  const box=$("alist");box.textContent="";
+  if(!$("ac").value){box.textContent="No classes on this date. Add classes in the Classes tab.";return}
+  S.forEach(s=>{
+    const p=document.createElement("div");p.className="ar";
+    const n=document.createElement("span");n.textContent=s.name;const g=document.createElement("span");
+    [["P","Present"],["L","Late"],["A","Absent"]].forEach(([k,l])=>{const b=document.createElement("button");b.className="g"+(stat(s.id)===k?" on":"");b.textContent=l;b.style.marginLeft="4px";b.onclick=()=>mark(s.id,k);g.append(b)});
+    p.append(n,g);box.append(p);
+  });
+}
+function drawRep(){
+  const tb=$("arep");tb.textContent="";
+  S.forEach(s=>{
+    const m=A.filter(k=>k.sid===s.id),tr=document.createElement("tr");
+    [s.name,m.filter(k=>k.s==="P").length,m.filter(k=>k.s==="L").length,m.filter(k=>k.s==="A").length,m.length?s.att+"%":"—"].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td)});
+    tb.append(tr);
+  });
+}
+$("ad").onchange=fillCls;$("ac").onchange=drawList;
+$("allp").onclick=()=>{const d=$("ad").value,c=$("ac").value;if(!c)return;S.forEach(s=>{const r=A.find(k=>k.d===d&&k.c==c&&k.sid===s.id);if(r)r.s="P";else A.push({d,c,sid:s.id,s:"P"})});saveA();sync()};
+
+// ---------- Navigation & login ----------
+function go(p){
+  document.querySelectorAll("section[data-p]").forEach(s=>s.classList.toggle("on",s.dataset.p===p));
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));
+  if(p==="attendance"){if(!$("ad").value)$("ad").value=today();fillCls();drawRep()}
+  if(p==="home")renderHome();
+  if(p==="logins")loadLogins();
+  scrollTo(0,0);
+}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>go(b.dataset.p));
+const USERS={admin:"admin123",teacher:"teach123"};
+function enter(u){$("lg").hidden=true;$("who").textContent="👤 "+((acc()[u]&&acc()[u].n)||u);go("home")}
+let SU=false,TOK=null;
+async function api(path,body,tok){const r=await fetch(path,{method:body?"POST":"GET",headers:Object.assign({"Content-Type":"application/json"},tok?{Authorization:"Bearer "+tok}:{}),body:body?JSON.stringify(body):undefined});let j=null;try{j=await r.json()}catch(e){}return{ok:r.ok,j}}
+async function loadLogins(){
+  const tb=$("lrows"),sm=$("lsum");tb.textContent="";sm.textContent="Loading…";
+  let R=null;try{R=await api("/api/logins",null,TOK)}catch(e){}
+  if(!R||!R.ok){sm.textContent="Login activity needs the backend server (see README). Not available in this mode.";return}
+  const L=R.j;sm.textContent=L.length+" recent logins · "+new Set(L.map(x=>x.username)).size+" different users";
+  L.forEach(x=>{const tr=document.createElement("tr");[x.name,x.username,x.role,new Date(x.time).toLocaleString(),x.ip].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td)});tb.append(tr)});
+}
+const acc=()=>{try{return JSON.parse(localStorage.getItem("smsAcc")||"{}")}catch(e){return{}}};
+const hash=async(u,p)=>{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(u+":"+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")};
+$("lt").onclick=()=>{SU=!SU;$("sn").hidden=!SU;$("lb").textContent=SU?"Create account":"Sign in";$("lt").textContent=SU?"Have an account? Sign in":"New student? Sign up";$("le").textContent=""};
+$("lf").onsubmit=async e=>{
+  e.preventDefault();const f=new FormData(e.target),u=f.get("u").trim().toLowerCase(),p=f.get("p"),A2=acc();
+  if(!/^[a-z0-9_.]{3,20}$/.test(u)){$("le").textContent="Username: 3–20 letters, numbers, . or _";return}
+  let R=null;try{R=await api(SU?"/api/signup":"/api/login",{name:f.get("n"),username:u,password:p})}catch(x){}
+  if(R&&R.j){
+    if(!R.ok){$("le").textContent=R.j.error||"Failed";return}
+    TOK=R.j.token;$("le").textContent="";e.target.reset();enter(u);
+    $("who").textContent="👤 "+R.j.name+" ("+R.j.role+")";$("navL").hidden=!(R.j.role==="admin"||R.j.role==="teacher");return;
+  }
+  if(SU){
+    if(USERS[u]||A2[u]){$("le").textContent="That username is taken.";return}
+    if(p.length<6){$("le").textContent="Password must be at least 6 characters.";return}
+    A2[u]={n:f.get("n").trim()||u,h:await hash(u,p)};
+    try{localStorage.setItem("smsAcc",JSON.stringify(A2))}catch(x){$("le").textContent="Could not save account (storage blocked).";return}
+  }else if(!((USERS[u]&&USERS[u]===p)||(A2[u]&&A2[u].h===await hash(u,p)))){$("le").textContent="Wrong username or password.";return}
+  try{sessionStorage.setItem("smsU",u)}catch(x){}
+  $("le").textContent="";e.target.reset();enter(u);
+};
+$("out").onclick=()=>{try{sessionStorage.removeItem("smsU")}catch(e){}TOK=null;$("navL").hidden=true;$("lg").hidden=false};
+
+train();render();renderDay();go("home");
+let U=null;try{U=sessionStorage.getItem("smsU")}catch(e){}
+if(U&&(USERS[U]||acc()[U]))enter(U);
+</script>
+</body>
+</html>
